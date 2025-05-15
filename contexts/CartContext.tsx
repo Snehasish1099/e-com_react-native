@@ -1,6 +1,7 @@
 import { getCartFromStorage, saveCartToStorage } from '@/utils/storage';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
+// Interface of a single cart item
 export interface CartItem {
     id: number;
     title: string;
@@ -17,12 +18,14 @@ interface CartContextType {
     total: number;
 }
 
+// cart context
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 // Context Provider for Cart 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [cart, setCart] = useState<CartItem[]>([]);
 
+    // On first mount, load cart data from async storage 
     useEffect(() => {
         (async () => {
             const storedCart = await getCartFromStorage();
@@ -30,10 +33,12 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         })();
     }, []);
 
+    // Whenever cart state changes, save it to persistent storage
     useEffect(() => {
         saveCartToStorage(cart);
     }, [cart]);
 
+    // Add to cart func. 
     const addToCart = (item: CartItem) => {
         setCart(prev => {
             const existing = prev.find(crt => crt?.id === item?.id);
@@ -46,10 +51,12 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         });
     };
 
+    // Remove from cart by item id func. 
     const removeFromCart = (id: number) => {
         setCart(prev => prev.filter(item => item.id !== id));
     };
 
+    // Func. to update the quantity of an item stored
     const updateQuantity = (id: number, quantity: number) => {
         setCart(prev =>
             prev.map(item => item.id === id ? { ...item, quantity: Math.max(1, quantity) } : item)
@@ -65,6 +72,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     );
 };
 
+
+// Custom hook to use cart context inside components
 export const useCart = () => {
     const context = useContext(CartContext);
     if (!context) {

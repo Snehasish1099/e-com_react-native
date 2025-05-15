@@ -26,6 +26,7 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <CartProvider>
+        {/* Common Header which will be visible for all screens  */}
         <Stack
           screenOptions={{
             header: () => <Header />,
@@ -53,7 +54,7 @@ export default function RootLayout() {
               ),
             }}
           />
-          <Stack.Screen name="product" options={{ title: "Product Details" }} />
+          <Stack.Screen name="product/[id]" options={{ title: "Product Details" }} />
           <Stack.Screen name="+not-found" />
         </Stack>
         <StatusBar style="auto" />

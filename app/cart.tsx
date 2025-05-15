@@ -2,11 +2,10 @@ import { useCart } from "@/contexts/CartContext";
 import React from "react";
 import { Button, FlatList, StyleSheet, Text, TextInput, View } from "react-native";
 
-
 // Cart screen 
 const Cart = () => {
     const { cart, updateQuantity, removeFromCart } = useCart();
-    const total = cart.reduce((sum, item) => sum + item?.price * item?.quantity, 0);
+    const total = cart.reduce((sum, item) => sum + item?.price * item?.quantity, 0);    // To get the total of the cart items and quantity in real-time
 
     return (
         <View style={styles.container}>
@@ -17,12 +16,16 @@ const Cart = () => {
                     <View style={[styles.item, cart.length > 1 && index < cart.length - 1 ? styles.itemWithBorder : null]}>
                         <Text style={styles.title}>{item?.title}</Text>
                         <Text style={styles.price}>${item?.price?.toFixed(2)} x {item?.quantity}</Text>
+
+                        {/* Input where we can change the quantity as we wish  */}
                         <TextInput
                             keyboardType="numeric"
                             defaultValue={item?.quantity?.toString()}
                             onChangeText={(text) => updateQuantity(item?.id, Number(text))}
                             style={styles.input}
                         />
+
+                        {/* Button to remove a specific item from cart  */}
                         <View style={styles.removeButton}>
                             <Button
                                 title="Remove"
