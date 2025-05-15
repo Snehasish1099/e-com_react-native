@@ -4,7 +4,7 @@ import { useRouter } from "expo-router";
 import React from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 
-// Product Card 
+// Product Card common component, that is clickable/pressable
 const ProductCard = ({ product }: { product: Product }) => {
     const router = useRouter();
 
@@ -22,7 +22,7 @@ const ProductCard = ({ product }: { product: Product }) => {
             <Text style={styles.price}>${product?.price?.toFixed(2)}</Text>
             <View style={styles.rating}>
                 <Ionicons name="star" size={15} color="gold" />
-                <Text > {product?.rating?.rate}</Text>
+                <Text style={styles.ratingText}>{product?.rating?.rate}</Text>
             </View>
         </Pressable>
     );
@@ -59,9 +59,12 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "flex-start",
-        color: '#facc15',
         marginTop: 4,
+        gap: 5
     },
+    ratingText: {
+        color: '#facc15',
+    }
 });
 
 export default ProductCard;

@@ -1,22 +1,36 @@
 import { PRODUCT_API } from "@/constants/Apis";
 import { useCart } from "@/contexts/CartContext";
 import { Product } from "@/types/product";
+import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { Button, Image, ScrollView, StyleSheet, Text } from "react-native";
+import { Button, Image, ScrollView, StyleSheet, Text, View } from "react-native";
 
 // Product Details screen 
 const ProductDetail = () => {
     const { id } = useLocalSearchParams<{ id: string }>();
-    const [product, setProduct] = useState<Product | null>(null);
     const { cart, addToCart, removeFromCart } = useCart();
 
+    // For fetching product details and storing the data 
+    const [product, setProduct] = useState<Product | null>(null);
+
+    const getProductByIdApiCall = async () => {
+        try {
+            const res = await fetch(`${PRODUCT_API}/${id}`);
+            const data = await res.json();
+            setProduct(data);
+        } catch (error) {
+            console.error("Failed to fetch products:", error);
+        }
+    }
+
+    // Api call whenever the screen appears 
     useEffect(() => {
-        fetch(`${PRODUCT_API}/${id}`)
-            .then((res) => res.json())
-            .then(setProduct);
+        getProductByIdApiCall()
     }, [id]);
 
+
+    // UI starts 
     if (!product) return null;
 
     return (
@@ -29,9 +43,12 @@ const ProductDetail = () => {
             <Text style={styles.title}>{product.title}</Text>
             <Text style={styles.description}>{product.description}</Text>
             <Text style={styles.price}>${product.price}</Text>
-            <Text style={styles.rating}>
-                ⭐ {product.rating.rate} ({product.rating.count})
-            </Text>
+            <View style={styles.rating}>
+                <Ionicons name="star" size={15} color="gold" />
+                <Text style={styles.ratingText}>{product.rating.rate} ({product.rating.count} reviews)</Text>
+            </View>
+
+            {/* Add to or remove from Cart logic for product items */}
             {cart.some((item) => item.id === product.id) ? (
                 <Button
                     title="Remove from Cart"
@@ -71,10 +88,17 @@ const styles = StyleSheet.create({
         marginTop: 8,
     },
     rating: {
-        color: "#f59e0b",
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "flex-start",
         marginTop: 4,
         marginBottom: 8,
+        gap: 5
     },
+    ratingText: {
+        color: '#facc15',
+    }
 });
 
 export default ProductDetail
